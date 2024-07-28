@@ -6,7 +6,7 @@ export default function EditLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="h-screen">
       <Header />
       {children}
     </div>

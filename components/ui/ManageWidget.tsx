@@ -12,7 +12,7 @@ export default function ManageWidget() {
   return (
     <div className="h-1/4 flex flex-col items-center">
       <h1>Manage Portfolio</h1>
-      <div>
+      <div className="flex flex-wrap justify-center">
         <Button className="m-3" onClick={handleSave}>
           Save
         </Button>
