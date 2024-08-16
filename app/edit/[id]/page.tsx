@@ -50,7 +50,7 @@ export default function EditPage({ id }: { id: string }) {
           </ResizablePanel>
           <ResizableHandle withHandle onDoubleClick={handleResetPanelSize} />
           <ResizablePanel minSize={18} defaultSize={sidebarSize} ref={refSidebar}>
-            <Sidebar />
+            <Sidebar state={state}/>
           </ResizablePanel>
         </ResizablePanelGroup>
         <DragOverlay>{dragOverlay}</DragOverlay>

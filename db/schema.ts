@@ -2,26 +2,28 @@ import { SQL, sql } from "drizzle-orm";
 import { AnySQLiteColumn, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // ---- Tables ----
-export const portfolio = sqliteTable("portfolio", {
+export const portfoliosTable = sqliteTable("portfoliosTable", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  user_id: integer("user_id", { mode: "number" }).references(() => users.id),
-  content: text("content", { mode: "json" }),
-  created_at: integer("created_at", { mode: "timestamp" }).notNull(),
-  updated_at: integer("updated_at", { mode: "timestamp" }).notNull(),
+  userId: integer("userId", { mode: "number" }).references(() => usersTable.id),
+  description: text("description", { mode: "text" }).notNull(),
+  content: text("content", { mode: "json" }).notNull(),
+  published: integer("published", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
-export const users = sqliteTable(
-  "users",
+export const usersTable = sqliteTable(
+  "usersTable",
   {
     id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    email: text("email", { mode: "text" }).unique(),
-    password_hash: text("password_hash", { mode: "text" }),
-    created_at: integer("created_at", { mode: "timestamp" }).notNull(),
-    updated_at: integer("updated_at", { mode: "timestamp" }).notNull(),
-  },
-  (table) => ({
-    emailUniqueIndex: uniqueIndex("emailUniqueIndex").on(lower(table.email)),
-  })
+    email: text("email", { mode: "text" }).unique().notNull(),
+    passwordHash: text("passwordHash", { mode: "text" }).notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  }
+  // (table) => ({
+  //   emailUniqueIndex: uniqueIndex("emailUniqueIndex").on(lower(table.email)),
+  // })
 );
 
 // ---- Custom Functions ----

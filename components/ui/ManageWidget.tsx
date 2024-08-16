@@ -1,8 +1,27 @@
+import { PortfolioPostRequestBody, StateObject } from "@/types";
 import { Button } from "./button";
 
-export default function ManageWidget() {
-  function handleSave() {
-    console.log("Save - Not implemented");
+export default function ManageWidget({ state }: { state: StateObject[] }) {
+  async function handleSave() {
+    // Check if the state is empty
+    if (state.length === 0) {
+      console.log("State is empty");
+      return;
+    }
+
+    // Send the state to the server
+    const result = await fetch("/api/portfolio", {
+      method: "POST",
+      body: JSON.stringify({
+        user_token: "1234",
+        portfolioId: 1,
+        portfolio: {
+          description: "Portfolio",
+          content: state,
+        },
+      } satisfies PortfolioPostRequestBody),
+    });
+    console.log(await result.json());
   }
 
   function handlePublish() {
