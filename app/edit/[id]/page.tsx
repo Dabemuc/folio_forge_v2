@@ -8,7 +8,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/
 import { useRef, useState } from "react";
 import { ImperativePanelHandle } from "react-resizable-panels";
 
-export default function EditPage() {
+export default function EditPage({ id }: { id: string }) {
   const refSidebar = useRef<ImperativePanelHandle>(null);
   const sidebarSize = 22;
   const [state, setState] = useState<StateObject[]>([]);
@@ -24,7 +24,7 @@ export default function EditPage() {
 
   function handleDragEnd(event: DragEndEvent) {
     setDragOverlay(null);
-    
+
     if (!event.over) {
       return;
     }
