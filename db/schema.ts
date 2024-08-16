@@ -1,4 +1,4 @@
-import { SQL, relations, sql } from "drizzle-orm";
+import { SQL, sql } from "drizzle-orm";
 import { AnySQLiteColumn, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // ---- Tables ----
@@ -6,9 +6,8 @@ export const portfolio = sqliteTable("portfolio", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   user_id: integer("user_id", { mode: "number" }).references(() => users.id),
   content: text("content", { mode: "json" }),
-  created_at: integer("created_at", { mode: "timestamp" }),
-  updated_at: integer("updated_at", { mode: "timestamp" }
-  ),
+  created_at: integer("created_at", { mode: "timestamp" }).notNull(),
+  updated_at: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
 export const users = sqliteTable(
@@ -17,8 +16,8 @@ export const users = sqliteTable(
     id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
     email: text("email", { mode: "text" }).unique(),
     password_hash: text("password_hash", { mode: "text" }),
-    created_at: integer("created_at", { mode: "timestamp" }),
-    updated_at: integer("updated_at", { mode: "timestamp" }),
+    created_at: integer("created_at", { mode: "timestamp" }).notNull(),
+    updated_at: integer("updated_at", { mode: "timestamp" }).notNull(),
   },
   (table) => ({
     emailUniqueIndex: uniqueIndex("emailUniqueIndex").on(lower(table.email)),
