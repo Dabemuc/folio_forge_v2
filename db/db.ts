@@ -1,8 +1,10 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient, type Client } from "@libsql/client";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { lower, portfoliosTable, usersTable } from "./schema";
 import * as schema from "./schema";
+import { BlockObject } from "@/types";
+import { create } from "domain";
 
 /**
  * SETUP DB CONNECTION
@@ -12,8 +14,7 @@ const globalForDb = globalThis as unknown as {
   client: Client | undefined;
 };
 
-export const client =
-  globalForDb.client ?? createClient({ url: process.env.DATABASE_URL! });
+export const client = globalForDb.client ?? createClient({ url: process.env.DATABASE_URL! });
 if (process.env.NODE_ENV !== "production") globalForDb.client = client;
 
 export const db = drizzle(client, { schema });
@@ -29,7 +30,7 @@ export const createUser = async (email: string, passwordHash: string) => {
   return await db.insert(usersTable).values(newUser);
 };
 
-export const createPortfolio = async (userId: number, content: string, description: string) => {
+export const createPortfolio = async (userId: number, content: BlockObject[], description: string) => {
   console.log("Creating portfolio", "userId:", userId, "content:", content, "description:", description);
   const newPortfolio: typeof portfoliosTable.$inferInsert = {
     userId: userId,
@@ -40,6 +41,9 @@ export const createPortfolio = async (userId: number, content: string, descripti
   };
   return await db.insert(portfoliosTable).values(newPortfolio);
 };
+
+// createUser("testemail123", "testpassword123"); // test
+// createPortfolio(1, [{ id: "h1", props: { text: "TestHeader1" } }], "test"); // test
 
 // ---- Read Functions ----
 export const findUserById = async (id: number) => {
@@ -55,6 +59,13 @@ export const findUserByEmail = async (email: string) => {
 
 export const findPortfolioById = async (id: number) => {
   return await db.select().from(portfoliosTable).where(eq(portfoliosTable.id, id));
+};
+
+export const findPublishedPortfolioById = async (id: number) => {
+  return await db
+    .select()
+    .from(portfoliosTable)
+    .where(and(eq(portfoliosTable.id, id), eq(portfoliosTable.published, true)));
 };
 
 export const findPortfoliosByUserId = async (userId: number) => {
@@ -78,21 +89,24 @@ export const updateUser = async (id: number, email?: string, passwordHash?: stri
   return await db.update(usersTable).set(userUpdate).where(eq(usersTable.id, id));
 };
 
-export const updatePortfolio = async (id: number, content?: string, description?: string, published?: boolean) => {
-  if (!content && !description && published === undefined) {
+export const updatePortfolio = async (
+  id: number,
+  values: { content?: BlockObject[]; description?: string; published?: boolean }
+) => {
+  if (!values.content && !values.description && values.published === undefined) {
     return;
   }
   const portfolioUpdate = {
     updatedAt: new Date(Date.now()),
   };
-  if (content) {
-    Object.assign(portfolioUpdate, { content: content });
+  if (values.content) {
+    Object.assign(portfolioUpdate, { content: values.content });
   }
-  if (description) {
-    Object.assign(portfolioUpdate, { description: description });
+  if (values.description) {
+    Object.assign(portfolioUpdate, { description: values.description });
   }
-  if (published !== undefined) {
-    Object.assign(portfolioUpdate, { published: published });
+  if (values.published !== undefined) {
+    Object.assign(portfolioUpdate, { published: values.published });
   }
   return await db.update(portfoliosTable).set(portfolioUpdate).where(eq(portfoliosTable.id, id));
 };

@@ -1,14 +1,14 @@
 "use client";
 
-import { StateObject } from "@/types";
+import { EditPortfolioComponent, EditState } from "@/types";
 import ComponentsWidget from "./ComponentsWidget";
 import ManageWidget from "./ManageWidget";
 
-export default function Sidebar({ state }: { state: StateObject[] }) {
+export default function Sidebar({ editState }: { editState: EditState }) {
   return (
     <aside className="sticky flex flex-col items-center h-full w-full bg-secondary">
       <ComponentsWidget />
-      <ManageWidget state={state} />
+      <ManageWidget editState={editState} />
     </aside>
   );
 }

@@ -28,6 +28,6 @@ export default function Heading1() {
   );
 }
 
-function generateJSX(props: H1_props) {
+export function generateJSX(props: H1_props) {
   return <h1>{props.text}</h1>;
 }

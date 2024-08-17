@@ -1,3 +1,4 @@
+import { BlockObject } from "@/types";
 import { SQL, sql } from "drizzle-orm";
 import { AnySQLiteColumn, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
@@ -6,7 +7,7 @@ export const portfoliosTable = sqliteTable("portfoliosTable", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   userId: integer("userId", { mode: "number" }).references(() => usersTable.id),
   description: text("description", { mode: "text" }).notNull(),
-  content: text("content", { mode: "json" }).notNull(),
+  content: text("content", { mode: "json" }).notNull().$type<BlockObject[]>(),
   published: integer("published", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),

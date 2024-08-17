@@ -30,6 +30,6 @@ export default function Paragraph() {
   );
 }
 
-function generateJSX(props: p_props) {
+export function generateJSX(props: p_props) {
   return <p>{props.text}</p>;
 }
