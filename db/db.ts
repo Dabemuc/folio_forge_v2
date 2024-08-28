@@ -42,9 +42,6 @@ export const createPortfolio = async (userId: number, content: BlockObject[], de
   return await db.insert(portfoliosTable).values(newPortfolio);
 };
 
-// createUser("testemail123", "testpassword123"); // test
-// createPortfolio(1, [{ id: "h1", props: { text: "TestHeader1" } }], "test"); // test
-
 // ---- Read Functions ----
 export const findUserById = async (id: number) => {
   return await db.select().from(usersTable).where(eq(usersTable.id, id));
@@ -93,7 +90,9 @@ export const updatePortfolio = async (
   id: number,
   values: { content?: BlockObject[]; description?: string; published?: boolean }
 ) => {
+  console.log("Updating portfolio with id:", id, "values:", values)
   if (!values.content && !values.description && values.published === undefined) {
+    console.error("No values to update")
     return;
   }
   const portfolioUpdate = {
@@ -108,6 +107,7 @@ export const updatePortfolio = async (
   if (values.published !== undefined) {
     Object.assign(portfolioUpdate, { published: values.published });
   }
+  console.log("Pushing update to database:", portfolioUpdate)
   return await db.update(portfoliosTable).set(portfolioUpdate).where(eq(portfoliosTable.id, id));
 };
 
@@ -119,3 +119,19 @@ export const deleteUser = async (id: number) => {
 export const deletePortfolio = async (id: number) => {
   return await db.delete(portfoliosTable).where(eq(portfoliosTable.id, id));
 };
+
+
+
+
+
+// ------ TESTING -------
+findUserById(1).then((result) => {
+  if(result.length > 0) {
+    console.log("TestUser found:", result[0]);
+  } else {
+    console.log("TestUser not found, creating...")
+    createUser("testemail123", "testpassword123");
+  } 
+});
+  // createPortfolio(1, [{ id: "h1", props: { text: "TestHeader1" } }], "test");
+  

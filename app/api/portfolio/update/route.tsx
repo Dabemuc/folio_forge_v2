@@ -27,8 +27,11 @@ export async function POST(req: Request) {
     console.log("Updating portfolio", portfolioId);
     const existingPortfolio = (await findPortfolioById(portfolioId))[0];
     if (existingPortfolio) {
+      console.log("Portfolio already exists, updating...")
       result = await updatePortfolio(portfolioId, { content: portfolio.content, description: portfolio.description });
     } else {
+      console.log("Portfolio does not exist, creating...")
+      result = await createPortfolio(userId, portfolio.content, portfolio.description);
     }
 
     if (!result || result.rowsAffected === 0) {
