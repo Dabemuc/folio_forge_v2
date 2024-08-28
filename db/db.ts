@@ -90,9 +90,9 @@ export const updatePortfolio = async (
   id: number,
   values: { content?: BlockObject[]; description?: string; published?: boolean }
 ) => {
-  console.log("Updating portfolio with id:", id, "values:", values)
+  console.log("Updating portfolio with id:", id, "values:", values);
   if (!values.content && !values.description && values.published === undefined) {
-    console.error("No values to update")
+    console.error("No values to update");
     return;
   }
   const portfolioUpdate = {
@@ -107,7 +107,7 @@ export const updatePortfolio = async (
   if (values.published !== undefined) {
     Object.assign(portfolioUpdate, { published: values.published });
   }
-  console.log("Pushing update to database:", portfolioUpdate)
+  console.log("Pushing update to database:", portfolioUpdate);
   return await db.update(portfoliosTable).set(portfolioUpdate).where(eq(portfoliosTable.id, id));
 };
 
@@ -120,18 +120,22 @@ export const deletePortfolio = async (id: number) => {
   return await db.delete(portfoliosTable).where(eq(portfoliosTable.id, id));
 };
 
-
-
-
-
-// ------ TESTING -------
-findUserById(1).then((result) => {
-  if(result.length > 0) {
-    console.log("TestUser found:", result[0]);
+// ------ CREATE TEST DATA -------
+async function createTestData() {
+  console.log("########### Creating test data... ###########");
+  
+  const testUserResult = await findUserById(1)
+  if (testUserResult.length > 0) {
+    console.log("TestUser already exists:", testUserResult[0]);
   } else {
-    console.log("TestUser not found, creating...")
-    createUser("testemail123", "testpassword123");
-  } 
-});
+    console.log("TestUser not found, creating...");
+    await createUser("testemail123", "testpassword123");
+  }
+  
   // createPortfolio(1, [{ id: "h1", props: { text: "TestHeader1" } }], "test");
   
+  console.log("########### Test data created! ###########")
+}
+if (process.env.NODE_ENV === "development" && process.env.CREATE_TEST_DATA === "true") {
+  createTestData();
+}
